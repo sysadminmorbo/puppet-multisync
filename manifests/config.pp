@@ -1,3 +1,17 @@
+# == Class: multisync::config
+#
+# Internal class that copies the required set up scripts to the client. It
+# compiles the lsyncd / csync2 configuration files if trigged and generates
+# an SSH key for csync2 if it doesn't exist yet.
+#
+# === Authors
+#
+# Ingmar Steen <iksteen@gmail.com>
+#
+# === Copyright
+#
+# Copyright 2013 Ingmar Steen, unless otherwise noted.
+#
 class multisync::config {
   # Generate SSL key
   file { "${::multisync_basedir}/bin/gen-ssh-key.sh":
@@ -36,7 +50,7 @@ class multisync::config {
     ],
     refreshonly => true,
   }
-  
+
   exec { 'reload multisync lsyncd config':
     command     => 'killall -HUP lsyncd',
     path        => ['/bin', '/usr/bin'],

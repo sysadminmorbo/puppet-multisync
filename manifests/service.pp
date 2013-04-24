@@ -1,3 +1,16 @@
+# == Class: multisync::service
+#
+# Internal class that sets up the service script to start lsyncd. This
+# class is included automatically.
+#
+# === Authors
+#
+# Ingmar Steen <iksteen@gmail.com>
+#
+# === Copyright
+#
+# Copyright 2013 Ingmar Steen, unless otherwise noted.
+#
 class multisync::service {
   case $::operatingsystem {
     archlinux: {

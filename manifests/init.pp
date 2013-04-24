@@ -1,3 +1,18 @@
+# == Class: multisync
+#
+# This class installs the csync2 and lsyncd packages and sets up the
+# basic directory structure on the client that's required for the
+# compilation script. You don't have to include this class manually, it
+# is included automatically.
+#
+# === Authors
+#
+# Ingmar Steen <iksteen@gmail.com>
+#
+# === Copyright
+#
+# Copyright 2013 Ingmar Steen, unless otherwise noted.
+#
 class multisync {
   $csync2_confdir = $::operatingsystem ? {
     centos  => '/etc/csync2',
