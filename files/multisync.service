@@ -1,0 +1,11 @@
+[Unit]
+Description=multisync
+Wants=network.target
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/lsyncd /etc/lsyncd-multisync.conf
+
+[Install]
+WantedBy=multi-user.target
