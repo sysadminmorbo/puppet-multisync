@@ -32,9 +32,9 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
     next_host = (ix == hosts.length - 1) ? hosts[0] : hosts[ix + 1]
     prev_host = (ix == 0) ? hosts.last : hosts[ix - 1]
 
-    # Group name is md5(group:master_fqdn) to work around
+    # Group name is md5(group:slave_fqdn) to work around
     # character restrictions.
-    group_name = Digest::MD5.hexdigest "#{group}:#{fqdn}"
+    group_name = Digest::MD5.hexdigest "#{group}:#{next_host}"
     File.open("#{csync2_confdir}/csync2_#{group_name}.cfg", 'w') { |f|
       f.puts "group #{group_name} {"
       f.puts "  host #{fqdn};"
@@ -48,7 +48,7 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
     }
     source_map[group_name] = path
 
-    group_name = Digest::MD5.hexdigest "#{group}:#{prev_host}"
+    group_name = Digest::MD5.hexdigest "#{group}:#{fqdn}"
     File.open("#{csync2_confdir}/csync2_#{group_name}.cfg", 'w') { |f|
       f.puts "group #{group_name} {"
       f.puts "  host #{prev_host};"
