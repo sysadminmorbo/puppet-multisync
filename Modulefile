@@ -1,0 +1,8 @@
+name    'iksteen-multisync'
+version '0.0.1'
+source  'git://github.com/iksteen/puppet-multisync.git'
+author  'Ingmar Steen <iksteen@gmail.com>'
+license 'Apache License, Version 2.0'
+summary 'Multi-server / cluster synchronization.'
+description 'Set up multi-server synchronization using lsyncd and csync2'
+project_page 'http://github.com/iksteen/puppet-multisync'
