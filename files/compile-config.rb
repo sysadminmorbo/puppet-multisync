@@ -19,6 +19,12 @@ source_map = Hash.new
 Dir["#{groups_dir}/*"].sort.each { |group_dir|
   group = File.basename(group_dir)
   hosts = Dir["#{group_dir}/*"].sort.map { |h| File.basename(h) }
+  paths = hosts.map { |host|
+    path = File.open(File.join(group_dir, host)).first
+    "  on #{host}: #{path};"
+  }.join("\n")
+  prefix = "prefix path {\n#{paths}\n}"
+
   # Check if localhost is a member of this group
   ix = hosts.index(fqdn)
   if ! ix.nil? && hosts.length > 1
@@ -34,9 +40,11 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
       f.puts "  host #{fqdn};"
       f.puts "  host (#{next_host});"
       f.puts "  key #{csync2_confdir}/csync2.#{group}.key;"
-      f.puts "  include #{path};"
+      f.puts "  include %path%;"
       f.puts "  auto none;"
       f.puts "}"
+      f.puts
+      f.puts prefix
     }
     source_map[group_name] = path
 
@@ -46,9 +54,11 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
       f.puts "  host #{prev_host};"
       f.puts "  host (#{fqdn});"
       f.puts "  key #{csync2_confdir}/csync2.#{group}.key;"
-      f.puts "  include #{path};"
+      f.puts "  include %path%;"
       f.puts "  auto none;"
       f.puts "}"
+      f.puts
+      f.puts prefix
     }
   end
 }
