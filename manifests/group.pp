@@ -14,6 +14,7 @@
 #
 define multisync::group(
   $path,
+  $key,
   $group = $title,
 ) {
   require multisync
@@ -23,11 +24,11 @@ define multisync::group(
     ensure => directory,
   }->
   # Copy the group key
-  file { "${multisync::csync2_confdir}/csync2.${group}.key":
+  file { "${multisync::csync2_confdir}/csync2_${group}.key":
     owner  => root,
     group  => root,
     mode   => '0600',
-    source => "puppet:///modules/multisync/${group}.key",
+    source => $key,
   }->
   # Create the configuration directory for the compilation script
   file { "${::multisync_basedir}/groups/${group}":

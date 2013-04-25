@@ -11,10 +11,16 @@
 # [*path*]
 #   Specify the path on the client that is synchronized.
 #
+# [*key*]
+#   Specify the key file to use. Defaults to
+#   puppet:///modules/multisync/${group}.key. If you use this, be
+#   aware that it is always copied to /etc/csync2_${group}.key.
+#
 # === Examples
 #
 #  multisync::member { 'my_sync_group':
 #    path => '/srv/sync_group',
+#    key  => 'puppet:///modules/my_module/csync2.key',
 #  }
 #
 # === Authors
@@ -28,7 +34,13 @@
 define multisync::member(
     $path,
     $group = $title,
+    $key   = undef,
 ) {
+  $key_real = $key ? {
+    undef   => "puppet:///modules/multisync/${group}.key",
+    default => $key,
+  }
+
   @@multisync::groupmember { "${group} - ${::fqdn}":
     group => $group,
     path  => $path,
@@ -37,5 +49,6 @@ define multisync::member(
 
   multisync::group { $group:
     path => $path,
+    key  => $key_real,
   }
 }
