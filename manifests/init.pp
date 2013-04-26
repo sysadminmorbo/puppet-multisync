@@ -13,18 +13,19 @@
 #
 # Copyright 2013 Ingmar Steen, unless otherwise noted.
 #
-class multisync {
-  $csync2_confdir = $::operatingsystem ? {
-    centos  => '/etc/csync2',
-    default => '/etc',
-  }
-
+class multisync(
+    $csync2_confdir = $multisync::params::csync2_confdir,
+    $csync2_package = 'csync2',
+    $lsyncd_package = 'lsyncd',
+) inherits multisync::params {
   package { 'csync2':
     ensure => installed,
+    name   => $csync2_package,
   }
 
   package { 'lsyncd':
     ensure => installed,
+    name   => $lsyncd_package,
   }
 
 
