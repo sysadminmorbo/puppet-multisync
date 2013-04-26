@@ -20,9 +20,11 @@ class multisync::config {
     owner  => root,
     group  => root,
     source => 'puppet:///modules/multisync/gen-ssh-key.sh',
-  }->
+  }
+
   exec { "${::multisync_basedir}/bin/gen-ssh-key.sh \"${::fqdn}\" \"${multisync::csync2_confdir}\"":
     creates => "${multisync::csync2_confdir}/csync2_ssl_cert.pem",
+    require => File["${::multisync_basedir}/bin/gen-ssh-key.sh"],
   }
 
   # Compile csync2 configuration
@@ -33,7 +35,8 @@ class multisync::config {
     group  => root,
     source => 'puppet:///modules/multisync/compile-config.rb',
     notify => Exec['compile multisync config'],
-  }->
+  }
+
   file { "${::multisync_basedir}/data/lsyncd.conf.tmpl":
     ensure => file,
     mode   => '0644',
@@ -41,7 +44,8 @@ class multisync::config {
     group  => root,
     source => 'puppet:///modules/multisync/lsyncd.conf.tmpl',
     notify => Exec['compile multisync config'],
-  }->
+  }
+
   exec { 'compile multisync config':
     command     => "${::multisync_basedir}/bin/compile-config.rb",
     environment => [
@@ -49,6 +53,10 @@ class multisync::config {
       "csync2_confdir=${multisync::csync2_confdir}",
     ],
     refreshonly => true,
+    require     => [
+      File["${::multisync_basedir}/bin/compile-config.rb"],
+      File["${::multisync_basedir}/data/lsyncd.conf.tmpl"],
+    ],
   }
 
   exec { 'reload multisync lsyncd config':

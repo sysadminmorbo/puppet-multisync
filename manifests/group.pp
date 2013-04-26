@@ -22,14 +22,16 @@ define multisync::group(
   # Create the sync directory
   file { $path:
     ensure => directory,
-  }->
+  }
+
   # Copy the group key
   file { "${multisync::csync2_confdir}/csync2_${group}.key":
     owner  => root,
     group  => root,
     mode   => '0600',
     source => $key,
-  }->
+  }
+
   # Create the configuration directory for the compilation script
   file { "${::multisync_basedir}/groups/${group}":
     ensure  => directory,
@@ -37,8 +39,12 @@ define multisync::group(
     purge   => true,
     force   => true,
     notify  => Exec['compile multisync config'],
+    require => [
+      File[$path],
+      File["${multisync::csync2_confdir}/csync2_${group}.key"],
+    ]
   }
 
-  # Fetch all the group members
+  # Realise the group members
   Multisync::Groupmember <<| group == $group  |>>
 }

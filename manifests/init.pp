@@ -22,6 +22,7 @@ class multisync {
   package { 'csync2':
     ensure => installed,
   }
+
   package { 'lsyncd':
     ensure => installed,
   }
