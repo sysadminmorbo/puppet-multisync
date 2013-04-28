@@ -15,58 +15,73 @@ class multisync::service {
   case $::operatingsystem {
     archlinux: {
       file { '/etc/systemd/system/multisync.service':
-        ensure => present,
-        owner  => root,
-        group  => root,
-        mode   => '0644',
-        source => 'puppet:///modules/multisync/multisync.service',
-      }->
+        ensure  => present,
+        owner   => root,
+        group   => root,
+        mode    => '0644',
+        source  => 'puppet:///modules/multisync/multisync.service',
+        require => [
+          Package['csync2'],
+          Package['lsyncd'],
+        ],
+      }
+
       service { 'multisync':
         ensure  => running,
         enable  => true,
         require => [
-          Package['csync2'],
-          Package['lsyncd'],
+          File['/etc/systemd/system/multisync.service'],
           Exec['compile multisync config'],
         ],
       }
     }
+
     debian: {
       file { '/etc/init.d/multisync':
-        ensure => present,
-        owner  => root,
-        group  => root,
-        mode   => '0755',
-        source => 'puppet:///modules/multisync/multisync.debian',
-      }->
+        ensure  => present,
+        owner   => root,
+        group   => root,
+        mode    => '0755',
+        source  => 'puppet:///modules/multisync/multisync.debian',
+        require => [
+          Package['csync2'],
+          Package['lsyncd'],
+        ],
+      }
+
       service { 'multisync':
         ensure  => running,
         enable  => true,
         require => [
-          Package['csync2'],
-          Package['lsyncd'],
+          File['/etc/init.d/multisync'],
           Exec['compile multisync config'],
         ],
       }
     }
+
     centos: {
       file { '/etc/init.d/multisync':
-        ensure => present,
-        owner  => root,
-        group  => root,
-        mode   => '0755',
-        source => 'puppet:///modules/multisync/multisync.rh',
-      }->
+        ensure  => present,
+        owner   => root,
+        group   => root,
+        mode    => '0755',
+        source  => 'puppet:///modules/multisync/multisync.rh',
+        require => [
+          Package['csync2'],
+          Package['lsyncd'],
+        ],
+      }
+
       service { 'multisync':
         ensure  => running,
         enable  => true,
         require => [
-          Package['csync2'],
-          Package['lsyncd'],
+          File['/etc/init.d/multisync'],
           Exec['compile multisync config'],
         ],
       }
     }
+
     default: {
       notify { "automatic starting of multisync service not supported on ${::operatingsystem}": }
     }

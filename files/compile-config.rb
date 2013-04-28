@@ -27,7 +27,7 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
 
   # Check if localhost is a member of this group
   ix = hosts.index(fqdn)
-  if ! ix.nil? && hosts.length > 1
+  if ! ix.nil?
     path = File.open(File.join(group_dir, fqdn)).first
     next_host = (ix == hosts.length - 1) ? hosts[0] : hosts[ix + 1]
     prev_host = (ix == 0) ? hosts.last : hosts[ix - 1]
