@@ -9,7 +9,7 @@ if lsyncdver[1].to_i < 2
   raise RuntimeError('lsyncd too old (need >= 2.0.0)')
 end
 
-hostnaname = ENV['hostname']
+hostname = ENV['hostname']
 csync2_confdir = ENV['csync2_confdir']
 groups_dir = File.dirname(__FILE__) + '/../groups'
 lsyncdconf = File.dirname(__FILE__) + '/../data/lsyncd.conf.tmpl'
