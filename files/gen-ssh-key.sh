@@ -12,7 +12,7 @@ prompt = no
 distinguished_name = req_distinguished_name
 
 [ req_distinguished_name ]
-CN = $1
+O = csync2
 EOF
 
 openssl genrsa \
