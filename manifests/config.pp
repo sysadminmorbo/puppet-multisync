@@ -49,7 +49,7 @@ class multisync::config {
   exec { 'compile multisync config':
     command     => "${::multisync_basedir}/bin/compile-config.rb",
     environment => [
-      "fqdn=${::fqdn}",
+      "hostname=${::hostname}",
       "csync2_confdir=${multisync::csync2_confdir}",
     ],
     refreshonly => true,

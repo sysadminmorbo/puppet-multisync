@@ -9,7 +9,7 @@ if lsyncdver[1].to_i < 2
   raise RuntimeError('lsyncd too old (need >= 2.0.0)')
 end
 
-fqdn = ENV['fqdn']
+hostnaname = ENV['hostname']
 csync2_confdir = ENV['csync2_confdir']
 groups_dir = File.dirname(__FILE__) + '/../groups'
 lsyncdconf = File.dirname(__FILE__) + '/../data/lsyncd.conf.tmpl'
@@ -26,18 +26,18 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
   prefix = "prefix path {\n#{paths}\n}"
 
   # Check if localhost is a member of this group
-  ix = hosts.index(fqdn)
+  ix = hosts.index(hostname)
   if ! ix.nil?
-    path = File.open(File.join(group_dir, fqdn)).first
+    path = File.open(File.join(group_dir, hostname)).first
     next_host = (ix == hosts.length - 1) ? hosts[0] : hosts[ix + 1]
     prev_host = (ix == 0) ? hosts.last : hosts[ix - 1]
 
-    # Group name is md5(group:slave_fqdn) to work around
+    # Group name is md5(group:slave_hostname) to work around
     # character restrictions.
     group_name = Digest::MD5.hexdigest "#{group}:#{next_host}"
     File.open("#{csync2_confdir}/csync2_#{group_name}.cfg", 'w') { |f|
       f.puts "group #{group_name} {"
-      f.puts "  host #{fqdn};"
+      f.puts "  host #{hostname};"
       f.puts "  host (#{next_host});"
       f.puts "  key #{csync2_confdir}/csync2_#{group}.key;"
       f.puts "  include %path%;"
@@ -48,11 +48,11 @@ Dir["#{groups_dir}/*"].sort.each { |group_dir|
     }
     source_map[group_name] = path
 
-    group_name = Digest::MD5.hexdigest "#{group}:#{fqdn}"
+    group_name = Digest::MD5.hexdigest "#{group}:#{hostname}"
     File.open("#{csync2_confdir}/csync2_#{group_name}.cfg", 'w') { |f|
       f.puts "group #{group_name} {"
       f.puts "  host #{prev_host};"
-      f.puts "  host (#{fqdn});"
+      f.puts "  host (#{hostname});"
       f.puts "  key #{csync2_confdir}/csync2_#{group}.key;"
       f.puts "  include %path%;"
       f.puts "  auto none;"

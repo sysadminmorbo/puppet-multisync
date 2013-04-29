@@ -41,10 +41,10 @@ define multisync::member(
     default => $key,
   }
 
-  @@multisync::groupmember { "${group} - ${::fqdn}":
+  @@multisync::groupmember { "${group} - ${::hostname}":
     group => $group,
     path  => $path,
-    host  => $::fqdn,
+    host  => $::hostname,
   }
 
   multisync::group { $group:

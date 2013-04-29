@@ -12,7 +12,7 @@ prompt = no
 distinguished_name = req_distinguished_name
 
 [ req_distinguished_name ]
-CN = vmnode01.thegraveyard.org
+CN = $1
 EOF
 
 openssl genrsa \
