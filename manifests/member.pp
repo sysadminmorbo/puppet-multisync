@@ -60,10 +60,10 @@ define multisync::member(
   }
 
   multisync::group { $group:
-    path => $path,
-    key  => $key_real,
-    path_owner = $path_owner,
-    path_group = $path_group,
-    path_mode  = $path_mode,
+    path       => $path,
+    key        => $key_real,
+    path_owner => $path_owner,
+    path_group => $path_group,
+    path_mode  => $path_mode,
   }
 }
