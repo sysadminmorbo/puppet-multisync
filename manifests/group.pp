@@ -14,6 +14,9 @@
 #
 define multisync::group(
   $path,
+  $path_owner,
+  $path_group,
+  $path_mode,
   $key,
   $group = $title,
 ) {
@@ -22,6 +25,9 @@ define multisync::group(
   # Create the sync directory
   file { $path:
     ensure => directory,
+    owner  => $path_owner,
+    group  => $path_group,
+    mode   => $path_mode,
   }
 
   # Copy the group key

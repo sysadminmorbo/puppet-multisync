@@ -16,6 +16,15 @@
 #   puppet:///modules/multisync/${group}.key. If you use this, be
 #   aware that it is always copied to /etc/csync2_${group}.key.
 #
+# [*path_owner*']
+#   Specify the owner of the synchronisation path. Defaults to root.
+#
+# [*path_group*]
+#   Specify the group of the synchronisation path. Defaults to root.
+#
+# [*path_mode*]
+#   Specify the access mode of the synchronisation path. Defaults to '0755'.
+#
 # === Examples
 #
 #  multisync::member { 'my_sync_group':
@@ -33,8 +42,11 @@
 #
 define multisync::member(
     $path,
-    $group = $title,
-    $key   = undef,
+    $group      = $title,
+    $key        = undef,
+    $path_owner = 'root',
+    $path_group = 'root',
+    $path_mode  = '0755',
 ) {
   $key_real = $key ? {
     undef   => "puppet:///modules/multisync/${group}.key",
@@ -50,5 +62,8 @@ define multisync::member(
   multisync::group { $group:
     path => $path,
     key  => $key_real,
+    path_owner = $path_owner,
+    path_group = $path_group,
+    path_mode  = $path_mode,
   }
 }
