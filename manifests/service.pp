@@ -12,8 +12,8 @@
 # Copyright 2013 Ingmar Steen, unless otherwise noted.
 #
 class multisync::service {
-  case $::operatingsystem {
-    archlinux: {
+  case $::osfamily {
+    'Archlinux': {
       file { '/etc/systemd/system/multisync.service':
         ensure  => present,
         owner   => root,
@@ -36,7 +36,7 @@ class multisync::service {
       }
     }
 
-    debian: {
+    'Debian': {
       file { '/etc/init.d/multisync':
         ensure  => present,
         owner   => root,
@@ -59,7 +59,7 @@ class multisync::service {
       }
     }
 
-    centos: {
+    'RedHat': {
       file { '/etc/init.d/multisync':
         ensure  => present,
         owner   => root,
@@ -83,7 +83,7 @@ class multisync::service {
     }
 
     default: {
-      notify { "automatic starting of multisync service not supported on ${::operatingsystem}": }
+      notify { "automatic starting of multisync service not supported on ${::osfamily}": }
     }
   }
 }
