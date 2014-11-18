@@ -12,8 +12,8 @@
 # Copyright 2013 Ingmar Steen, unless otherwise noted.
 #
 class multisync::params {
-  case $::operatingsystem {
-    centos:  { $csync2_confdir = '/etc/csync2' }
+  case $::osfamily {
+    RedHat:  { $csync2_confdir = '/etc/csync2' }
     default: { $csync2_confdir = '/etc'        }
   }
 }
