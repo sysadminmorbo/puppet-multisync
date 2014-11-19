@@ -56,7 +56,7 @@ define multisync::member(
   @@multisync::groupmember { "${group} - ${::hostname}":
     group => $group,
     path  => $path,
-    host  => $::hostname,
+    host  => $::fqdn,
   }
 
   multisync::group { $group:
