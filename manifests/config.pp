@@ -24,7 +24,10 @@ class multisync::config {
 
   exec { "${::multisync_basedir}/bin/gen-ssh-key.sh \"${::fqdn}\" \"${multisync::csync2_confdir}\"":
     creates => "${multisync::csync2_confdir}/csync2_ssl_cert.pem",
-    require => File["${::multisync_basedir}/bin/gen-ssh-key.sh"],
+    require => [
+      File["${::multisync_basedir}/bin/gen-ssh-key.sh"],
+      File["${multisync::csync2_confdir}"],
+    ]
   }
 
   # Compile csync2 configuration

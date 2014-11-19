@@ -32,10 +32,11 @@ define multisync::group(
 
   # Copy the group key
   file { "${multisync::csync2_confdir}/csync2_${group}.key":
-    owner  => root,
-    group  => root,
-    mode   => '0600',
-    source => $key,
+    owner   => root,
+    group   => root,
+    mode    => '0600',
+    source  => $key,
+    require => File["${multisync::csync2_confdir}"],
   }
 
   # Create the configuration directory for the compilation script

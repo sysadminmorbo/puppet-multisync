@@ -28,6 +28,12 @@ class multisync(
     name   => $lsyncd_package,
   }
 
+  file { $csync2_confdir:
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
 
   file { $::multisync_basedir:
     ensure  => directory,
