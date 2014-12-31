@@ -14,20 +14,31 @@
 #
 class multisync::config {
   # Generate SSL key
-  file { "${::multisync_basedir}/bin/gen-ssh-key.sh":
-    ensure => file,
-    mode   => '0755',
-    owner  => root,
-    group  => root,
-    source => 'puppet:///modules/multisync/gen-ssh-key.sh',
+  $multisync_module_path = get_module_path('multisync')
+
+  $csync2_ssl_cert =
+    generate( "/usr/bin/perl",
+              "${multisync_module_path}/files/generate_ssl_keypair",
+              "--type", "cert", "--fqdn", "$::fqdn",
+              "--directory", $::multisync::persist_directory)
+  $csync2_ssl_key =
+    generate( "/usr/bin/perl",
+              "${multisync_module_path}/files/generate_ssl_keypair",
+              "--type", "key", "--fqdn", "$::fqdn",
+              "--directory", $::multisync::persist_directory)
+
+  file { "${multisync::csync2_confdir}/csync2_ssl_cert.pem":
+      content => $csync2_ssl_cert,
+      owner   => 'root',
+      group   => 'root',
+      mode    => 700
   }
 
-  exec { "${::multisync_basedir}/bin/gen-ssh-key.sh \"${::fqdn}\" \"${multisync::csync2_confdir}\"":
-    creates => "${multisync::csync2_confdir}/csync2_ssl_cert.pem",
-    require => [
-      File["${::multisync_basedir}/bin/gen-ssh-key.sh"],
-      File["${multisync::csync2_confdir}"],
-    ]
+  file { "${multisync::csync2_confdir}/csync2_ssl_key.pem":
+      content => $csync2_ssl_key,
+      owner   => 'root',
+      group   => 'root',
+      mode    => 700
   }
 
   # Compile csync2 configuration

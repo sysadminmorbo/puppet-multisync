@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Path::Tiny;
+use File::Copy;
+use File::Temp qw(tempdir);
+use Getopt::Long qw(:config bundling no_ignore_case);
+
+
+my %opt;
+
+sub main
+{
+    ## type (key/cert), fqdn, persist_dir
+    GetOptions(\%opt, qw(help|h type|t=s fqdn|f=s directory|d=s)) or
+        die "Usage: $0 -t type -f fqdn -d directory\n";
+
+    defined ($opt{fqdn}) or
+        die "No hostname given";
+
+    grep {$opt{type} eq $_} qw(cert key) or
+        die "Unexpected type: '$opt{type}'";
+
+    File::Path::Tiny::mk($opt{directory}, '0700') or
+        die "Can't create '$opt{directory}'";
+
+    my $filename = "$opt{directory}/$opt{fqdn}.$opt{type}.pem";
+
+    -f $filename or
+        generate_ssl($opt{directory}, $opt{type}, $opt{fqdn});
+
+    open (my $fh, '<', $filename) or
+        die "Can't read '$filename': $!";
+    while (<$fh>)
+    {
+        print $_;
+    }
+    close $fh;
+}
+
+sub generate_ssl
+{
+    my ($dir, $type, $fqdn) = @_;
+
+    my $tempdir = tempdir (csync2XXXX => TMPDIR  => 1,
+                                         CLEANUP => 1);
+    open (my $fh, '>', "$tempdir/openssl.cnf") or
+        die "Can't write to openssl conf: '$_'";
+    print $fh <<EoT;
+[ req ]
+prompt = no
+distinguished_name = req_distinguished_name
+
+[ req_distinguished_name ]
+O = csync2
+EoT
+
+    system openssl => genrsa => -out => "$tempdir/$fqdn.key.pem", 1024;
+    $? and die "Can't generate RSA key: $!";
+
+    system openssl => req => -new => -key => "$tempdir/$fqdn.key.pem" =>
+  -config => "$tempdir/openssl.cnf", -out => "$tempdir/$fqdn.csr.pem";
+    $? and die "Can't generate CSR: $!";
+
+    system openssl => x509 => -req => -days => 600 =>
+                               -in => "$tempdir/$fqdn.csr.pem" =>
+                          -signkey => "$tempdir/$fqdn.key.pem" =>
+                              -out => "$tempdir/$fqdn.cert.pem";
+    $? and die "Can't create cert: $!";
+
+    copy ("$tempdir/$fqdn.key.pem",  $dir);
+    copy ("$tempdir/$fqdn.cert.pem", $dir);
+}
+
+main;
+
+exit;
